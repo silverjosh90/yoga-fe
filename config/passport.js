@@ -1,7 +1,7 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
-var GoogleStrategy = require('passport-google').Strategy;
+var GoogleStrategy = require('passport-google-oauth').Strategy;
 var knex = require('../db/knex.js')
 var bcrypt = require('bcrypt')
 
@@ -9,16 +9,15 @@ function users() {
   return knex('users')
 }
 
-passport.use('google', new GoogleStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3000/auth/facebook/callback",
-    profileFields: ['id', 'displayName', 'photos', 'email']
+passport.use(new GoogleStrategy({
+    consumerKey: process.env.CLIENT_ID,
+    consumerSecret: process.env.CONSUMER_SECRET,
+    callbackURL: "http://127.0.0.1:3000/auth/google/callback"
   },
-  function(accessToken, refreshToken, profile, done) {
+  function(token, tokenSecret, profile, done) {
 
-    console.log("Google Auth Done");
-    return done(null, profile);
+      return done(null, user);
+
   }
 ));
 
